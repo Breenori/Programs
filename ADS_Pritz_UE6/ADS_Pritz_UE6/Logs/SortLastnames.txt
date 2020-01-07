@@ -1,0 +1,28 @@
+Reg. Number: 1910458147
+Name: Andreas Bourani
+Age: 39
+Points: 
+11, 31, 30, 56
+Median: 30.5
+
+Reg. Number: 1910458487
+Name: Tom Cook
+Age: 41
+Points: 
+11, 5, 47
+Median: 11
+
+Reg. Number: 1910458598
+Name: Giacomo Puccini
+Age: 58
+Points: 
+35, 60, 76, 38, 53, 12, 15, 33
+Median: 36.5
+
+Reg. Number: 1910458306
+Name: Tom Turbo
+Age: 31
+Points: 
+69, 10, 82, 73
+Median: 71
+

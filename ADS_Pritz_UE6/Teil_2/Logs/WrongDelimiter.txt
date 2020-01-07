@@ -1,0 +1,11 @@
+First Matrix:
+Ambiguous matrix format found. Terminating read process. 
+This matrix is empty.
+
+Second Matrix:
+Ambiguous matrix format found. Terminating read process. 
+This matrix is empty.
+
+Multiplied Matrix:
+This matrix is empty.
+

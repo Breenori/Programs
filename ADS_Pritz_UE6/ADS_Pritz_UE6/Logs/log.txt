@@ -1,0 +1,49 @@
+Reg. Number: 1910458200
+Name: Andreas Bourani
+Age: 37
+Points: 
+12, 13, 19, 65, 71, 96
+Median: 42
+
+Reg. Number: 1910458395
+Name: Ramsey Cook
+Age: 29
+Points: 
+1, 11, 34, 59, 65
+Median: 34
+
+Reg. Number: 1910458826
+Name: Tom Cook
+Age: 37
+Points: 
+19, 49, 69
+Median: 49
+
+Reg. Number: 1910458421
+Name: John Cortana
+Age: 28
+Points: 
+8, 29, 43, 70, 72, 73, 87, 89, 90
+Median: 72
+
+Reg. Number: 1910458664
+Name: Giacomo Puccini
+Age: 50
+Points: 
+19, 23, 33, 88, 91, 94
+Median: 60.5
+
+Reg. Number: 1910458088
+Name: Tony Stark
+Age: 49
+Points: 
+23, 40, 85, 88, 97
+Median: 85
+
+Reg. Number: 1910458297
+Name: Tom Turbo
+Age: 53
+Points: 
+3, 16, 19, 29, 48
+Median: 19
+
