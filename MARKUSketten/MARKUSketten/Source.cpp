@@ -9,7 +9,7 @@ string TEXT	("");
 vector<int> WORD;
 int TEXTLENGTH(0);
 int WORDCOUNT(0);
-int ORDER(2);
+int ORDER(3);
 
 void read_file(string const& name);
 void preprocess();
@@ -47,6 +47,7 @@ string get_phrase(int const index, int const& n)
 
 void main()
 {
+	srand((int)time(0));
 	vector<string> filenames = { "hp_short.txt" };
 	populate_text(filenames);
 	preprocess();
@@ -118,7 +119,6 @@ void populate_word()
 	}
 	while (TEXT.find(" ", offset) != string::npos)
 	{
-		int a = TEXT.find(" ", offset);
 		if (TEXT[TEXT.find(" ", offset) + 1] != ' ')
 		{
 			WORD.push_back(TEXT.find(" ", offset) + 1);
@@ -178,9 +178,11 @@ void sort()
 
 void print_nonsense()
 {
+	//cout << TEXT << std::endl;
 	bool end(false);
 	int phrase(0);
-	cout << get_phrase(0, ORDER);
+	string text("");
+	text += get_phrase(0, ORDER-1);
 
 	while (!end)
 	{
@@ -197,9 +199,12 @@ void print_nonsense()
 		}
 		else
 		{
-			cout << get_phrase(q, 1);
+			text += get_phrase(q, 1);
 		}
 	}
+
+	cout << text;
+
 }
 
 // Searches the first occurence
@@ -225,10 +230,10 @@ int choose_phrase(int const start, int const phrase)
 	int occurences(1);
 	while (get_phrase(WORD[start+occurences], ORDER-1) == get_phrase(phrase, ORDER-1))
 	{
+		string asd(get_phrase(WORD[start + occurences], ORDER));
 		occurences++;
 	}
 
-	srand((int)time(0));
 	int delta(rand() % occurences);
 
 	int val = start + delta;
@@ -239,18 +244,30 @@ int skip_words(int const index, int const n)
 	int offset(index);
 	string asd = get_phrase(index, 1);
 	int found(0);
-	while (TEXT.find(" ", offset) != string::npos && found < n)
+	while (TEXT.find(" ", offset) != string::npos && offset < TEXT.length() && found < n)
 	{
 		offset = TEXT.find(" ", offset) + 1;
 		asd = get_phrase(offset, 1);
 		found++;
 	}
 
-	return offset;
+	if (found == n)
+	{
+		return offset;
+	}
+	else
+	{
+		return TEXT.length() - 1;
+	}
 }
 
 int word_length(int index)
 {
+	if (index >= TEXT.length())
+	{
+		return 0;
+	}
+
 	int length(1);
 	int start(index);
 
