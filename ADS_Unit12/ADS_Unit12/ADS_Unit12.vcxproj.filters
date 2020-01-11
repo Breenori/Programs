@@ -21,9 +21,15 @@
     <ClCompile Include="calculations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="slw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculations.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slw.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
