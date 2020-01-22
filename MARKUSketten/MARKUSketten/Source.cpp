@@ -15,31 +15,31 @@ void read_file(string const& name);
 void populate_text(vector<string> const& filenames);
 void populate_word();
 void rotate(int const b, int const e);
-int strcmp(string const& str1, string const& str2);
+int strcmp(int index1, int index2, int order);
 void sort();
 void print_nonsense();
-int search_first_phrase(int const phrase);
-int choose_phrase(int const start, int const phrase);
-int skip_words(int const index, int const n);
+int choose_phrase(int start, int phrase);
+int skip_words(int index, int  n);
 int word_length(int index);
 int binary_search(int phrase);
-int find_char(char const c, int const offset);
-string substr(int const index, int const length);
-string get_phrase(int const index, int const& n);
+void print_word(int index);
+void print_x_words(int index, int n);
+void print_phrase(int index);
 
 void main()
 {
 	srand((int)time(0));
-	vector<string> filenames = { "hp_short.txt" };
+	vector<string> filenames = { "hp.txt" };
 	populate_text(filenames);
 	populate_word();
 	sort();
 
-	cout << WORD.size() << std::endl;
-	for (int i(0); i < std::size(WORD); i++)
+	cout << WORDCOUNT << std::endl;
+	for (int i(0); i < WORDCOUNT; i++)
 	{
-		cout << i + 1;
-		cout << get_phrase(WORD[i], ORDER) << std::endl;
+		cout << i;
+		print_phrase(WORD[i]);
+		cout << endl;
 	}
 
 	print_nonsense();
@@ -51,26 +51,22 @@ void read_file(string const& name)
 
 	if (in)
 	{
+		char last_char(0);
 		while (!in.eof())
 		{
-			string line("");
-			getline(in, line);
-			if (!line.empty())
+			char c(tolower(in.get()));
+
+			if (c == ' ' && last_char != ' ')
 			{
-				char last_char(0);
-				for (int i(0); i < line.size(); i++)
-				{
-					if (line[i] >= 'A' && line[i] <= 'Z')
-					{
-						line[i] = tolower(line[i]);
-					}
-					if (!(line[i] == ' ' && last_char == ' '))
-					{
-						TEXT.push_back(line[i]);
-					}
-					last_char = line[i];
-				}
-				TEXT.push_back(' ');
+				TEXT.push_back(c);
+				TEXTLENGTH++;
+				last_char = c;
+			}
+			else if (c != ' ' && c != '\\' && c != '\n')
+			{
+				TEXT.push_back(c);
+				TEXTLENGTH++;
+				last_char = c;
 			}
 		}
 	}
@@ -85,21 +81,12 @@ void populate_text(vector<string> const& filenames)
 void populate_word()
 {
 	int offset(0);
-	if (TEXT[0] >= 'a' && TEXT[0] <= 'z')
+	WORD.push_back(0);
+	while (WORD[offset] < TEXTLENGTH)
 	{
-		WORD.push_back(0);
+		WORD.push_back(WORD[offset] + word_length(WORD[offset]) + 1);
 		WORDCOUNT++;
 		offset++;
-	}
-	while (find_char(' ', offset) != -1)
-	{
-		if (TEXT[find_char(' ', offset) + 1] != ' ')
-		{
-			WORD.push_back(find_char(' ', offset) + 1);
-			WORDCOUNT++;
-		}
-		
-		offset = find_char(' ', offset) + 1;
 	}
 }
 void rotate(int const b, int const e)
@@ -112,37 +99,34 @@ void rotate(int const b, int const e)
 	WORD[b] = tmp;
 }
 // Returns -1 if the first string is lower
-int strcmp(string const& str1, string const& str2)
+int strcmp(int index1, int index2, int order)
 {
-	int state = 0;
-	int count(0);
-
-	while (state == 0 && count < str1.length())
+	bool equal(false);
+	
+	while (!equal && TEXT[index1] == TEXT[index2])
 	{
-		if (str1[count] > str2[count])
+		if (TEXT[index1] == ' ')
 		{
-			state = 1;
+			order--;
 		}
-		else if (str1[count] < str2[count])
+		if (order == 0)
 		{
-			state = -1;
+			equal = true;
 		}
-		count++;
+		index1++;
+		index2++;
 	}
 
-	return state;
+	return TEXT[index1] - TEXT[index2];
 }
 void sort()
 {
-	for (int i(0); i < std::size(WORD)-1; i++)
+	for (int i(0); i < WORDCOUNT-1; i++)
 	{
 		int tmp = i;
-		for (int j(i + 1); j < std::size(WORD); j++)
+		for (int j(i + 1); j < WORDCOUNT; j++)
 		{
-			string word1(get_phrase(WORD[j],ORDER));
-			string word2(get_phrase(WORD[tmp],ORDER));
-
-			if (strcmp(word1, word2) == -1)
+			if (strcmp(WORD[j], WORD[tmp], ORDER) < 0)
 			{
 				tmp = j;
 			}
@@ -156,23 +140,19 @@ void print_nonsense()
 	//cout << TEXT << std::endl;
 	bool end(false);
 	int phrase(0);
-	string text("");
-	text += get_phrase(0, ORDER-1);
+	
+	print_x_words(0, ORDER - 1);
 
 	while (!end)
 	{
-		//int s = search_first_phrase(phrase);
+		
 		int s = binary_search(phrase);
-		//int test = binary_search(phrase);
-		if (s < 0)
+		if (s == 1281)
 		{
-			cout << get_phrase(WORD[phrase], ORDER);
+			cout << "sup";
 		}
-		string asd = get_phrase(WORD[s], ORDER);
 		int w = choose_phrase(s,phrase);
-		asd = get_phrase(WORD[w], ORDER);
 		int q = skip_words(WORD[w], ORDER-1);
-		asd = get_phrase(q, 1);
 		phrase = skip_words(WORD[w], 1);
 		if (word_length(q) == 0)
 		{
@@ -180,38 +160,18 @@ void print_nonsense()
 		}
 		else
 		{
-			text += get_phrase(q, 1);
+			print_word(q);
 		}
 	}
-
-	cout << text;
-
 }
 
-// Searches the first occurence
-int search_first_phrase(int const phrase)
-{
-	bool found(false);
 
-	int counter(0);
-	while(counter < WORDCOUNT && !found)
-	{
-		if (get_phrase(WORD[counter], ORDER-1) == get_phrase(phrase, ORDER-1))
-		{
-			found = true;
-		}
-		counter++;
-	}
-
-	return counter-1;
-}
 // Chooses ONE of the possibilities
 int choose_phrase(int const start, int const phrase)
 {
 	int occurences(1);
-	while (get_phrase(WORD[start + occurences], ORDER - 1) == get_phrase(phrase, ORDER - 1))
+	while (start+occurences < WORDCOUNT && strcmp(WORD[start + occurences], phrase, ORDER -1) == 0)
 	{
-		string asd(get_phrase(WORD[start + occurences], ORDER));
 		occurences++;
 	}
 
@@ -220,43 +180,30 @@ int choose_phrase(int const start, int const phrase)
 	int val = start + delta;
 	return val;
 }
-int skip_words(int const index, int const n)
+int skip_words(int index, int n)
 {
-	int offset(index);
-	string asd = get_phrase(index, 1);
-	int found(0);
-	while (find_char(' ', offset) != -1 && offset < TEXT.size() && found < n)
+	while (n > 0)
 	{
-		offset = find_char(' ', offset) + 1;
-		asd = get_phrase(offset, 1);
-		found++;
+		index = index + word_length(index) + 1;
+		n--;
 	}
 
-	if (found == n)
-	{
-		return offset;
-	}
-	else
-	{
-		return TEXT.size() - 1;
-	}
+	return index;
 }
 int word_length(int index)
 {
-	if (index >= TEXT.size())
+	if (index >= TEXTLENGTH)
 	{
 		return 0;
 	}
 
-	int length(1);
 	int start(index);
-
-	while (TEXT[start + length] != ' ')
+	while (TEXT[index] != ' ' && index<TEXTLENGTH-1)
 	{
-		length++;
+		index++;
 	}
 
-	return length;
+	return index-start;
 }
 int binary_search(int phrase)
 {
@@ -267,7 +214,7 @@ int binary_search(int phrase)
 	{
 		int m = (l + r) / 2;
 
-		if (strcmp(get_phrase(phrase, ORDER - 1), get_phrase(WORD[m], ORDER - 1)) <= 0)
+		if (strcmp(phrase, WORD[m], ORDER - 1) <= 0)
 		{
 			r = m;
 		}
@@ -277,52 +224,28 @@ int binary_search(int phrase)
 		}
 	}
 
-	return (strcmp(get_phrase(phrase, ORDER - 1), get_phrase(WORD[r], ORDER - 1)) == 0) ? r : -1;
+	return (strcmp(phrase, WORD[r], ORDER - 1) == 0) ? r : -1;
 }
-int find_char(char const c, int const offset)
+
+void print_word(int index)
 {
-	bool found(false);
-	int index(offset);
-
-	while (index < TEXT.size() && !found)
+	print_x_words(index, 1);
+}
+void print_x_words(int index, int n)
+{
+	while (n > 0 && index < TEXTLENGTH)
 	{
-		if (TEXT[index] == c)
+		if (TEXT[index] == ' ')
 		{
-			found == true;
+			n--;
 		}
-
+		cout << TEXT[index];
 		index++;
 	}
-
-	return found ? index - 1 : -1;
 }
-string substr(int const index, int const length)
+
+void print_phrase(int index)
 {
-	string s("");
-	for (int i(index); i < (index + length); i++)
-	{
-		s += TEXT[i];
-	}
-
-	return s;
+	print_x_words(index, ORDER);
 }
-string get_phrase(int const index, int const& n)
-{
-		int found(0);
-		int offset(index);
 
-		while ((find_char(' ', offset) != -1) && (found < n))
-		{
-			found++;
-			offset = find_char(' ', offset) + 1;
-		}
-
-		if (found == n)
-		{
-			return substr(index, offset - index);
-		}
-		else
-		{
-			return substr(index, TEXT.size() - index);
-		}
-}
