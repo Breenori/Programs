@@ -18,5 +18,18 @@
     <ClCompile Include="Quelle.cpp">
       <Filter>Ressourcendateien</Filter>
     </ClCompile>
+    <ClCompile Include="slw.cpp">
+      <Filter>Ressourcendateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pairs.csv">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="slw.h">
+      <Filter>Ressourcendateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
