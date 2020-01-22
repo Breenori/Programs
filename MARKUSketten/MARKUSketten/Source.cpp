@@ -25,26 +25,36 @@ int binary_search(int phrase);
 void print_word(int index);
 void print_x_words(int index, int n);
 void print_phrase(int index);
+void quicksort(int low, int high);
+int partition(int low, int high);
+void print_summary();
 
 void main()
 {
 	srand((int)time(0));
-	vector<string> filenames = { "hp.txt" };
+	vector<string> filenames = { "hp.txt", "hp2.txt", "6andthecity.txt", "50shades.txt" };
 	populate_text(filenames);
 	populate_word();
-	sort();
+	quicksort(0, WORDCOUNT-1);
 
-	cout << WORDCOUNT << std::endl;
-	for (int i(0); i < WORDCOUNT; i++)
+	if (WORDCOUNT < 10000)
 	{
-		cout << i;
-		print_phrase(WORD[i]);
-		cout << endl;
+		print_summary();
 	}
 
 	print_nonsense();
 }
 
+void print_summary()
+{
+	cout << WORDCOUNT << std::endl;
+	for (int i(0); i < WORDCOUNT; i++)
+	{
+		cout << i << ": ";
+		print_phrase(WORD[i]);
+		cout << endl;
+	}
+}
 void read_file(string const& name)
 {
 	ifstream in(name);
@@ -55,6 +65,10 @@ void read_file(string const& name)
 		while (!in.eof())
 		{
 			char c(tolower(in.get()));
+			if (c == '\n')
+			{
+				c = ' ';
+			}
 
 			if (c == ' ' && last_char != ' ')
 			{
@@ -62,12 +76,17 @@ void read_file(string const& name)
 				TEXTLENGTH++;
 				last_char = c;
 			}
-			else if (c != ' ' && c != '\\' && c != '\n')
+			else if (c != ' ' && c != '\\')
 			{
 				TEXT.push_back(c);
 				TEXTLENGTH++;
 				last_char = c;
 			}
+		}
+		if (last_char != ' ')
+		{
+			TEXT.push_back(' ');
+			TEXTLENGTH++;
 		}
 	}
 }
@@ -82,12 +101,14 @@ void populate_word()
 {
 	int offset(0);
 	WORD.push_back(0);
+	WORDCOUNT++;
 	while (WORD[offset] < TEXTLENGTH)
 	{
 		WORD.push_back(WORD[offset] + word_length(WORD[offset]) + 1);
 		WORDCOUNT++;
 		offset++;
 	}
+	TEXT.push_back('\0');
 }
 void rotate(int const b, int const e)
 {
@@ -108,10 +129,10 @@ int strcmp(int index1, int index2, int order)
 		if (TEXT[index1] == ' ')
 		{
 			order--;
-		}
-		if (order == 0)
-		{
-			equal = true;
+			if (order == 0)
+			{
+				equal = true;
+			}
 		}
 		index1++;
 		index2++;
@@ -134,7 +155,31 @@ void sort()
 		rotate(i, tmp);
 	}
 }
+void quicksort(int low, int high)
+{
+	if (low < high)
+	{
+		int pi = partition(low, high);
+		quicksort(low, pi - 1);
+		quicksort(pi + 1, high);
+	}
+}
+int partition(int low, int high)
+{
+	int pivot(WORD[high]);
+	int i(low - 1);
 
+	for (int j(low); j <= high - 1; j++)
+	{
+		if (strcmp(WORD[j], pivot, ORDER) < 0)
+		{
+			i++;
+			swap(WORD[i], WORD[j]);
+		}
+	}
+	swap(WORD[i + 1], WORD[high]);
+	return i + 1;
+}
 void print_nonsense()
 {
 	//cout << TEXT << std::endl;
@@ -145,12 +190,7 @@ void print_nonsense()
 
 	while (!end)
 	{
-		
 		int s = binary_search(phrase);
-		if (s == 1281)
-		{
-			cout << "sup";
-		}
 		int w = choose_phrase(s,phrase);
 		int q = skip_words(WORD[w], ORDER-1);
 		phrase = skip_words(WORD[w], 1);
@@ -164,8 +204,6 @@ void print_nonsense()
 		}
 	}
 }
-
-
 // Chooses ONE of the possibilities
 int choose_phrase(int const start, int const phrase)
 {
@@ -226,7 +264,6 @@ int binary_search(int phrase)
 
 	return (strcmp(phrase, WORD[r], ORDER - 1) == 0) ? r : -1;
 }
-
 void print_word(int index)
 {
 	print_x_words(index, 1);
@@ -243,7 +280,6 @@ void print_x_words(int index, int n)
 		index++;
 	}
 }
-
 void print_phrase(int index)
 {
 	print_x_words(index, ORDER);
