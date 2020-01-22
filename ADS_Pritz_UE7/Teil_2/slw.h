@@ -17,5 +17,6 @@ void add_value(slw_t& slw, double const v);
 void set_max_size(slw_t& slw, size_t const s);
 void print(slw_t& slw, ostream& o = cout);
 void clear(slw_t& slw);
+void init(slw_t& slw);
 
 #endif

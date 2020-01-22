@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Casino.cpp">
+    <ClCompile Include="Quelle.cpp">
       <Filter>Ressourcendateien</Filter>
     </ClCompile>
   </ItemGroup>

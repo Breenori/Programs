@@ -30,7 +30,11 @@ void shift_left(vector<double>& slw)
 void clear(slw_t& slw)
 {
 	slw.max_size = 0;
-	slw.values.clear();
+	slw.sum = 0;
+}
+void init(slw_t& slw)
+{
+	slw.max_size = 0;
 	slw.sum = 0;
 }
 void print(slw_t& slw, ostream& o)
