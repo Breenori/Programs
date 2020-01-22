@@ -5,11 +5,18 @@ using namespace std;
 
 enum mode_type { mt_encrypt, mt_decrypt };
 
+// Returns a text that can be read from console or a file
+// Interactive Dialogue.
 string get_text();
+// Returns the mode_type (en- or decrypt) based on an interactive dialogue
 mode_type get_mode();
+// Returns the content of a file as a string using the given filename
 string read_from_file(string const& filename);
+// Returns a fileoutputstream which is created in an interactive dialogue
 ofstream get_output();
+// En- or decrypts a given string using the given key and mode
 void crypt(mode_type const& mode, string text, string const& key, ostream& out = cout);
+// Return true if a file exists, to check if we overwrite something
 bool file_exists(string filename);
 
 int main()
@@ -123,7 +130,7 @@ string read_from_file(string const& filename)
 		while (!ifs.eof())
 		{
 			getline(ifs, line);
-			text += line + "\n";
+			text += line;
 		}
 	}
 

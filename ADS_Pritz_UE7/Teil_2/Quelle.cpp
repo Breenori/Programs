@@ -19,11 +19,20 @@ vector<double> smooth(string const& sequence, size_t const& window_width, vector
 double normalize(vector<double>& input_vec);
 double max(vector<double> const& vec); 
 void draw(vector<double> const& vec, double const spacing, graph_type type);
+bool valid_letter(char const letter, vector<aminoacid_type> const& aminoacids);
+string read_from_file(string const& filename);
+string get_seq();
+int get_windowsize(string const& seq);
+void preprocess(string& s, vector<aminoacid_type> const& aminoacids);
 
 void main()
 {
 	vector<aminoacid_type> aminoacids(get_table("pairs.csv"));
-	vector<double> values(smooth("MSNSYVLVINSG", 3, aminoacids));
+	string seq(get_seq());
+	preprocess(seq, aminoacids);
+	cout << "The entered sequence is: " << seq << endl << endl;
+	int win_size(get_windowsize(seq));
+	vector<double> values(smooth(seq, win_size, aminoacids));
 	normalize(values);
 	draw(values, 0.1, gt_vertical);
 }
@@ -124,18 +133,18 @@ void draw(vector<double> const& vec, double const spacing, graph_type type)
 			{
 				quants *= -1;
 			}
-
+			cout << i + 1 << " ";
 			if (vec[i] > 0)
 			{
-				cout << fixed << setw(1 / spacing) << "|";
+				cout << fixed << setw(1 / spacing + 1 + 6) << "|";
 			}
 			else
 			{
-				cout << fixed << setw(1 / spacing - quants - 1);
+				cout << fixed << setw(1 / spacing - quants + 1 + 6);
 			}
 
 			// Based on how many quants we have, we print one line (horizontal only)
-			for (int j(0); j <= quants; j++)
+			for (int j(0); j < quants; j++)
 			{
 				cout << "-";
 			}
@@ -191,6 +200,44 @@ void draw(vector<double> const& vec, double const spacing, graph_type type)
 		}
 	}
 }
+bool valid_letter(char const letter, vector<aminoacid_type> const& aminoacids)
+{
+	bool valid(false);
+	int counter(0);
+	while (!valid && counter < aminoacids.size())
+	{
+		if (aminoacids[counter].key == letter)
+		{
+			valid = true;
+		}
+		counter++;
+	}
+
+	return valid;
+}
+string read_from_file(string const& filename)
+{
+	string text("");
+	ifstream ifs(filename);
+
+	if (ifs)
+	{
+		string line("");
+		while (!ifs.eof())
+		{
+			getline(ifs, line);
+			if (line[0] != '>' && line[0] != ';')
+			{
+				for (int i(0); i < line.length(); i++)
+				{
+					text += line[i];
+				}
+			}
+		}
+	}
+
+	return text;
+}
 std::vector<string> split_string(string const& str, char const delimiter)
 {
 	int offset(0);
@@ -212,4 +259,70 @@ std::vector<string> split_string(string const& str, char const delimiter)
 	}
 
 	return elements;
+}
+string get_seq() {
+	string ans("");
+	cout << "Where do you want to read from:\n";
+	cout << "(1) Textfile\n";
+	cout << "(2) Console\n";
+	while (ans != "1" && ans != "2")
+	{
+		getline(cin, ans);
+	}
+	cout << endl;
+	string text;
+	if (ans == "1")
+	{
+		bool read(false);
+		while (!read)
+		{
+			string filename;
+			cout << "Please enter the filename:\n";
+			getline(cin, filename);
+			text = read_from_file(filename);
+			read = true;
+
+			if (text.empty())
+			{
+				cout << "File is either empty or file not found.\n";
+				cout << "Do you want to change the filename? (y/n)";
+				getline(cin, ans);
+				if (ans == "y" || ans == "Y")
+				{
+					read = false;
+				}
+			}
+		}
+	}
+	else
+	{
+		cout << "Please enter your sequence:\n";
+		getline(cin, text);
+	}
+	return text;
+}
+int get_windowsize(string const& seq)
+{
+	int size(-1);
+	cout << "Please enter a window size: (must be odd and less than " << seq.length() << ")\n";
+	cin >> size;
+	while (cin.fail() || size <= 0 || size > seq.length() || size%2==0)
+	{
+		cout << "Please enter a valid number: ";
+		cin.clear();
+		cin.ignore(INT_MAX, '\n');
+		cin >> size;
+	}
+
+	return size;
+}
+void preprocess(string& s, vector<aminoacid_type> const& aminoacids)
+{
+	for (int i(0); i < s.length(); i++)
+	{
+		if (!valid_letter(s[i], aminoacids))
+		{
+			s.erase(s.begin() + i);
+		}
+	}
 }
