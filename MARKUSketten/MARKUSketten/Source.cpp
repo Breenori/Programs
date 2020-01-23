@@ -3,6 +3,7 @@
 #include<vector>
 #include<fstream>
 #include<time.h>
+#include<iomanip>
 using namespace std;
 
 vector<char> TEXT;
@@ -23,8 +24,8 @@ int skip_words(int index, int  n);
 int word_length(int index);
 int binary_search(int phrase);
 void print_word(int index);
-void print_x_words(int index, int n);
-void print_phrase(int index);
+void print_x_words(int index, int n, ostream& out = cout);
+void print_phrase(int index, ostream& out = cout);
 void quicksort(int low, int high);
 int partition(int low, int high);
 void print_summary();
@@ -32,12 +33,12 @@ void print_summary();
 void main()
 {
 	srand((int)time(0));
-	vector<string> filenames = { "hp.txt", "hp2.txt", "6andthecity.txt", "50shades.txt" };
+	vector<string> filenames = { "hp.txt", "hp2.txt", "50shades.txt", "6andthecity.txt"};
 	populate_text(filenames);
 	populate_word();
 	quicksort(0, WORDCOUNT-1);
 
-	if (WORDCOUNT < 10000)
+	if (WORDCOUNT < 1000000)
 	{
 		print_summary();
 	}
@@ -48,12 +49,14 @@ void main()
 void print_summary()
 {
 	cout << WORDCOUNT << std::endl;
+	ofstream out("summary.txt");
 	for (int i(0); i < WORDCOUNT; i++)
 	{
-		cout << i << ": ";
-		print_phrase(WORD[i]);
-		cout << endl;
+		out << fixed << setw(5) << i << ": ";
+		print_phrase(WORD[i],out);
+		out << endl;
 	}
+	out.close();
 }
 void read_file(string const& name)
 {
@@ -186,13 +189,13 @@ void print_nonsense()
 	bool end(false);
 	int phrase(0);
 	
-	print_x_words(0, ORDER - 1);
+	print_x_words(0, ORDER);
 
 	while (!end)
 	{
 		int s = binary_search(phrase);
 		int w = choose_phrase(s,phrase);
-		int q = skip_words(WORD[w], ORDER-1);
+		int q = skip_words(WORD[w], ORDER);
 		phrase = skip_words(WORD[w], 1);
 		if (word_length(q) == 0)
 		{
@@ -208,7 +211,7 @@ void print_nonsense()
 int choose_phrase(int const start, int const phrase)
 {
 	int occurences(1);
-	while (start+occurences < WORDCOUNT && strcmp(WORD[start + occurences], phrase, ORDER -1) == 0)
+	while (start+occurences < WORDCOUNT && strcmp(WORD[start + occurences], phrase, ORDER) == 0)
 	{
 		occurences++;
 	}
@@ -252,7 +255,7 @@ int binary_search(int phrase)
 	{
 		int m = (l + r) / 2;
 
-		if (strcmp(phrase, WORD[m], ORDER - 1) <= 0)
+		if (strcmp(phrase, WORD[m], ORDER) <= 0)
 		{
 			r = m;
 		}
@@ -262,13 +265,13 @@ int binary_search(int phrase)
 		}
 	}
 
-	return (strcmp(phrase, WORD[r], ORDER - 1) == 0) ? r : -1;
+	return (strcmp(phrase, WORD[r], ORDER) == 0) ? r : -1;
 }
 void print_word(int index)
 {
 	print_x_words(index, 1);
 }
-void print_x_words(int index, int n)
+void print_x_words(int index, int n, ostream& out)
 {
 	while (n > 0 && index < TEXTLENGTH)
 	{
@@ -276,12 +279,12 @@ void print_x_words(int index, int n)
 		{
 			n--;
 		}
-		cout << TEXT[index];
+		out << TEXT[index];
 		index++;
 	}
 }
-void print_phrase(int index)
+void print_phrase(int index, ostream& out)
 {
-	print_x_words(index, ORDER);
+	print_x_words(index, ORDER, out);
 }
 

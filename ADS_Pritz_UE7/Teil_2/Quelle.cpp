@@ -339,7 +339,7 @@ void draw(vector<double> const& vec, double const max, double const spacing, gra
 			// Based on how many quants we have, we print one line 
 			for (int j(0); j < quants; j++)
 			{
-				cout << "-";
+				cout << '-';
 			}
 
 			// If the hydrophacity is negative, the line ends with '|'

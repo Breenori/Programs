@@ -43,43 +43,48 @@ void main()
 			mode_type mode(choose_mode());
 			print_info(money, 0, mode);
 
-			__int64 bet(place_bet(money));
-			print_info(money, bet, mode);
-
-			if (mode == mt_color)
+			if (mode != mt_quit)
 			{
-				color_type guess(choose_color());
+				__int64 bet(place_bet(money));
+				print_info(money, bet, mode);
 
-
-				if (check_color(guess))
+				if (mode == mt_color)
 				{
-					money += 2 * bet;
-					won = true;
+					color_type guess(choose_color());
+
+
+					if (check_color(guess))
+					{
+						money += 2 * bet;
+						won = true;
+					}
+				}
+				else if (mode == mt_third)
+				{
+					int guess(choose_third());
+
+					if (check_third(guess))
+					{
+						money += 3 * bet;
+						won = true;
+					}
+				}
+				else if (mode == mt_number)
+				{
+					int guess(choose_number());
+
+					if (check_number(guess))
+					{
+						money += 36 * bet;
+						won = true;
+					}
 				}
 			}
-			else if (mode == mt_third)
+			else
 			{
-				int guess(choose_third());
-
-				if (check_third(guess))
-				{
-					money += 3 * bet;
-					won = true;
-				}
-			}
-			else if (mode == mt_number)
-			{
-				int guess(choose_number());
-
-				if (check_number(guess))
-				{
-					money += 36 * bet;
-					won = true;
-				}
-			}
-			else if (mode == mt_quit)
-			{
+				cout << fixed << setw(50) << "!!!!THANKS FOR PLAYING!!!\n\n";
 				playing = false;
+				system("pause");
 			}
 		}
 		else
