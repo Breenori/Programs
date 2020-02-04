@@ -45,19 +45,27 @@ void main()
 	// Prepare the sequence
 	string seq(get_seq());
 	preprocess(seq, aminoacids);
-	cout << "The entered sequence is: " << seq << endl << endl;
+	if (seq.length() > 1)
+	{
+		cout << "The entered sequence is: " << seq << endl << endl;
 
-	// Choose window size and display type
-	int win_size(get_windowsize(seq));
-	graph_type type(get_type());
+		// Choose window size and display type
+		int win_size(get_windowsize(seq));
+		cout << endl;
+		graph_type type(get_type());
 
-	// Normalize the values and determine max
-	vector<double> values(smooth(seq, win_size, aminoacids));
-	double max(normalize(values));
+		// Normalize the values and determine max
+		vector<double> values(smooth(seq, win_size, aminoacids));
+		double max(normalize(values));
 
-	// Print graph and additional info
-	draw(values, max, 0.05, type);
-	cout << "\nTo get the absolute values, simply multiply the maximum number (" << max << ") with the Y-values (0.05 per step).\n";
+		// Print graph and additional info
+		draw(values, max, 0.05, type);
+		cout << "\nTo get the absolute values, simply multiply the maximum number (" << max << ") with the Y-values (0.05 per step).\n";
+	}
+	else
+	{
+		cout << "Filtered Sequence is empty. Terminating";
+	}
 }
 
 vector<aminoacid_type> get_table(string const& filename)
@@ -136,8 +144,10 @@ string get_seq() {
 	cout << "Where do you want to read from:\n";
 	cout << "(1) Textfile\n";
 	cout << "(2) Console\n";
+	getline(cin, ans);
 	while (ans != "1" && ans != "2")
 	{
+		cout << "Please choose one of the options: ";
 		getline(cin, ans);
 	}
 	cout << endl;
@@ -208,7 +218,7 @@ void preprocess(string& s, vector<aminoacid_type> const& aminoacids)
 int get_windowsize(string const& seq)
 {
 	int size(-1);
-	cout << "Please enter a window size: (must be odd and less than " << seq.length() << ")\n";
+	cout << "Please enter a window size: (must be odd and less/equal " << seq.length() << ")\n";
 	cin >> size;
 	// Read in a valid number until it meets the needed criteria
 	while (cin.fail() || size <= 0 || size > seq.length() || size % 2 == 0)
@@ -218,6 +228,8 @@ int get_windowsize(string const& seq)
 		cin.ignore(INT_MAX, '\n');
 		cin >> size;
 	}
+	cin.clear();
+	cin.ignore(INT_MAX, '\n');
 
 	return size;
 }
@@ -227,8 +239,11 @@ graph_type get_type()
 	cout << "How would you like to display the values?\n";
 	cout << "(1) Horizontally\n";
 	cout << "(2) Vertically\n";
+
+	getline(cin, ans);
 	while (ans != "1" && ans != "2")
 	{
+		cout << "Please choose one of the options: ";
 		getline(cin, ans);
 	}
 
