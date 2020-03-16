@@ -8,35 +8,56 @@ using namespace std;
 enum mode_type { mt_color, mt_third, mt_number, mt_quit, mt_none };
 enum color_type { ct_red, ct_black};
 
+// Returns the mode the user chose in an interactive dialogue
 mode_type choose_mode();
+// Returns whether the user won with the chosen color
 bool check_color(color_type const color);
+// Returns the color that the user chose in an interactive dialogue
 color_type choose_color();
+// Returns whether the user won with the chosen third
 bool check_third(int const third_index);
+// Returns the index of the third, that the user chose 
 int choose_third();
+// Returns whether the user won with the chosen number
 bool check_number(int const guess);
+// Returns the number that the user chose. With error handling!
 int choose_number();
+// Returns the amount of money the user wants to start with
+__int64 get_chips();
+// Returns the amount of money the user wants to use for the current bet
 __int64 place_bet(__int64& money);
+// Prints current money, mode and bet.
 void print_info(__int64 const money, __int64 const bet, mode_type const mode = mt_none);
-void print_placeholder(int offset = 0);
+// Prints a fancy placeholder that spells "roulette" in ascii art.
+void print_placeholder();
 
 void main()
 {
 	srand((int)time(0));
 
-	__int64 money(0);
-	cout << "Please enter your investment:\n";
-	cin >> money;
+	__int64 money(get_chips());
 
 	bool playing(true);
 	bool won(false);
+	bool first(true);
+	// As long as the user has money or doesn't decide to quit, he can continue playing.
 	while (playing)
 	{
 		print_info(money, 0);
-		if (won)
+		if (!first)
 		{
-			cout << fixed << setw(50) << "!!!!YOU WON!!!\n\n";
-			won = false;
+			if (won)
+			{
+				cout << fixed << setw(36) << "!!!!YOU WON!!!\n\n";
+				won = false;
+			}
+			else
+			{
+				cout << fixed << setw(36) << "!!!YOU LOST!!!\n\n";
+			}
 		}
+		// Since there is nothing to print in the first round we need a flag
+		first = false;
 
 		if (money > 0)
 		{
@@ -48,6 +69,9 @@ void main()
 				__int64 bet(place_bet(money));
 				print_info(money, bet, mode);
 
+
+				// It usually would be better to first generate the random number and then pass it to the function
+				// However, that way the result can be determined via breakpoints which encourages cheating.
 				if (mode == mt_color)
 				{
 					color_type guess(choose_color());
@@ -55,6 +79,7 @@ void main()
 
 					if (check_color(guess))
 					{
+						// Depending on the mode, the player gets a different amount of money on win
 						money += 2 * bet;
 						won = true;
 					}
@@ -89,9 +114,9 @@ void main()
 		}
 		else
 		{
-			cout << fixed << setw(50) << "!!!!YOU LOST!!!\n\n";
-			cout << fixed << setw(50) << "!!!!YOU LOST!!!\n\n";
-			cout << fixed << setw(50) << "!!!!YOU LOST!!!\n\n";
+			// If the user has no money, stop the game.
+			cout << fixed << setw(45) << ">>You don't have any chips<<\n\n";
+			cout << fixed << setw(43) << "!!!THANKS FOR PLAYING!!!\n\n";
 			playing = false;
 			system("pause");
 		}
@@ -109,6 +134,7 @@ mode_type choose_mode()
 	cout << endl;
 	string ans;
 	getline(cin, ans);
+	// Make the user choose one of the options.
 	while (ans != "1" && ans != "2" && ans != "3" && ans != "4")
 	{
 		cout << "Please choose one of the options: ";
@@ -137,12 +163,15 @@ bool check_color(color_type const color)
 	unsigned int num(rand() % 37);
 	if (color == ct_black)
 	{
-		return (num % 2)==0;
+		// Black wins with a certainty of 18/37
+		return num > 0 && num <= 18;
 	}
 	else
 	{
-		return !((num % 2)==0);
+		// Red wins with a certainty of 18/37
+		return num > 18 && num <= 36;
 	}
+	// So there's a 1/37th chance of rolling 0 -> can't win with either color
 }
 color_type choose_color()
 {
@@ -170,6 +199,7 @@ color_type choose_color()
 bool check_third(int const third_index)
 {
 	unsigned int num(rand() % 37);
+	// Thirds are between 1-12, 13-24 and 25-36
 	return (num > third_index * 12) && (num <= (third_index + 1) * 12);
 }
 int choose_third()
@@ -207,7 +237,6 @@ bool check_number(int const guess)
 int choose_number()
 {
 	cout << "Pick your number:\n";
-	cout << endl;
 
 	int ans;
 	cin >> ans;
@@ -218,8 +247,27 @@ int choose_number()
 		cout << "Please choose a number between 0 and 36: ";
 		cin >> ans;
 	}
+	cin.clear();
+	cin.ignore(INT_MAX, '\n');
 
 	return ans;
+}
+__int64 get_chips()
+{
+	__int64 money;
+	cout << "How much money do you want to spend on chips?\n";
+	cin >> money;
+	while (money < 0 || cin.fail())
+	{
+		cin.clear();
+		cin.ignore(INT64_MAX, '\n');
+		cout << "Please enter a valid number:\n";
+		cin >> money;
+	}
+	cin.clear();
+	cin.ignore(INT64_MAX, '\n');
+
+	return money;
 }
 __int64 place_bet(__int64& money)
 {
@@ -229,10 +277,12 @@ __int64 place_bet(__int64& money)
 	while (bet < 0 || bet > money || cin.fail())
 	{
 		cin.clear();
-		cin.ignore(INT_MAX, '\n');
-		cout << "Please place a valid bet that doesn't exceed your capital:\n";
+		cin.ignore(INT64_MAX, '\n');
+		cout << "Please place a valid bet:\n";
 		cin >> bet;
 	}
+	cin.clear();
+	cin.ignore(INT64_MAX, '\n');
 	money -= bet;
 
 	return bet;
@@ -241,34 +291,40 @@ __int64 place_bet(__int64& money)
 void print_info(__int64 const money, __int64 const bet, mode_type const mode)
 {
 	system("CLS");
-	cout << "Money: " << fixed << setw(20) << money;
-	cout << fixed << setw(32) << "Bet: " << fixed << setw(20) << bet << "\n";
+	// I had to use dollars since console window doesn't support unicode out of the box, which is why it cant print €
+
+	// First we print default info
+	cout << "Money: " << fixed << setw(20) << money << "$";
+	cout << fixed << setw(10) << "Bet: " << fixed << setw(20) << bet << "$\n";
+	// Then the selected mode.
 	if (mode != mt_none)
 	{
-		cout << fixed << setw(60) << "Mode: ";
+		cout << fixed << setw(38) << "Mode: ";
 		if (mode == mt_number)
 		{
-			cout << fixed << setw(20) << "number\n";
+			cout << fixed << setw(22) << "number\n";
 		}
 		else if (mode == mt_third)
 		{
-			cout << fixed << setw(20) << "third\n";
+			cout << fixed << setw(22) << "third\n";
 		}
 		else if (mode == mt_color)
 		{
-			cout << fixed << setw(20) << "color\n";
+			cout << fixed << setw(22) << "color\n";
 		}
-		print_placeholder(1);
+		print_placeholder();
 		cout << endl;
 	}
 	else
 	{
-		print_placeholder(2);
+		cout << endl;
+		print_placeholder();
+		cout << endl;
 	}
 }
-void print_placeholder(int offset)
+void print_placeholder()
 {
-	for (int i(0); i < 3+offset; i++)
+	for (int i(0); i < 3; i++)
 	{
 		cout << endl;
 	}
