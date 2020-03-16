@@ -13,11 +13,14 @@ int WORDCOUNT(0);
 int ORDER(3);
 
 void read_file(string const& name);
-void populate_text(vector<string> const& filenames);
-void populate_word();
-void rotate(int const b, int const e);
+void read_text(vector<string> const& filenames);
+void split_text_in_words();
+
 int strcmp(int index1, int index2, int order);
+/*
 void sort();
+void rotate(int const b, int const e);
+*/
 void print_nonsense();
 int choose_phrase(int start, int phrase);
 int skip_words(int index, int  n);
@@ -33,31 +36,28 @@ void print_summary();
 void main()
 {
 	srand((int)time(0));
-	vector<string> filenames = { "hp.txt", "hp2.txt", "50shades.txt", "6andthecity.txt"};
-	populate_text(filenames);
-	populate_word();
+	vector<string> filenames = { "hp_short.txt"};
+	read_text(filenames);
+	split_text_in_words();
 	quicksort(0, WORDCOUNT-1);
 
-	if (WORDCOUNT < 1000000)
-	{
-		print_summary();
-	}
-
+	print_summary();
+	
 	print_nonsense();
 }
 
 void print_summary()
 {
 	cout << WORDCOUNT << std::endl;
-	ofstream out("summary.txt");
 	for (int i(0); i < WORDCOUNT; i++)
 	{
-		out << fixed << setw(5) << i << ": ";
-		print_phrase(WORD[i],out);
-		out << endl;
+		cout << fixed << setw(5) << i << ": ";
+		print_phrase(WORD[i]);
+		cout << endl;
 	}
-	out.close();
+	cout << endl;
 }
+
 void read_file(string const& name)
 {
 	ifstream in(name);
@@ -93,14 +93,14 @@ void read_file(string const& name)
 		}
 	}
 }
-void populate_text(vector<string> const& filenames)
+void read_text(vector<string> const& filenames)
 {
 	for (int i(0); i < std::size(filenames); i++)
 	{
 		read_file(filenames[i]);
 	}
 }
-void populate_word()
+void split_text_in_words()
 {
 	int offset(0);
 	WORD.push_back(0);
@@ -113,16 +113,6 @@ void populate_word()
 	}
 	TEXT.push_back('\0');
 }
-void rotate(int const b, int const e)
-{
-	int tmp = WORD[e];
-	for (int i(e-1); i >= b; i--)
-	{
-		WORD[i + 1] = WORD[i];
-	}
-	WORD[b] = tmp;
-}
-// Returns -1 if the first string is lower
 int strcmp(int index1, int index2, int order)
 {
 	bool equal(false);
@@ -143,6 +133,7 @@ int strcmp(int index1, int index2, int order)
 
 	return TEXT[index1] - TEXT[index2];
 }
+/*
 void sort()
 {
 	for (int i(0); i < WORDCOUNT-1; i++)
@@ -158,6 +149,15 @@ void sort()
 		rotate(i, tmp);
 	}
 }
+void rotate(int const b, int const e)
+{
+	int tmp = WORD[e];
+	for (int i(e - 1); i >= b; i--)
+	{
+		WORD[i + 1] = WORD[i];
+	}
+	WORD[b] = tmp;
+}*/
 void quicksort(int low, int high)
 {
 	if (low < high)
@@ -185,10 +185,10 @@ int partition(int low, int high)
 }
 void print_nonsense()
 {
-	//cout << TEXT << std::endl;
 	bool end(false);
 	int phrase(0);
 	
+	cout << "Here comes the text:\n";
 	print_x_words(0, ORDER);
 
 	while (!end)
@@ -207,7 +207,6 @@ void print_nonsense()
 		}
 	}
 }
-// Chooses ONE of the possibilities
 int choose_phrase(int const start, int const phrase)
 {
 	int occurences(1);
