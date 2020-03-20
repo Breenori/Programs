@@ -23,6 +23,7 @@
     <ProjectGuid>{5FFF7A5D-0576-43AD-9C11-2E5FF070CACD}</ProjectGuid>
     <RootNamespace>FDSPritzUE01</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Teil_1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 #include<stdlib.h>
 using std::cout;
 using std::cin;
@@ -10,7 +11,7 @@ enum action_t { start, take_l, take_r, take_both };
 // Returns a number entered by the user. Displays the given message for input information.
 int get_number(string const& message = "Please enter a number:");
 // Defines the amount of stones left and right with user input.
-void initialize(size_t& amount_l, size_t& amount_r);
+void initialize(size_t& amount_l, size_t& amount_r, size_t const min = 3, size_t const max = 15);
 // Computer makes move corresponding to the current stones left
 action_t make_move(size_t& amount_l, size_t& amount_r);
 // Let the user decide and make a move.
@@ -34,6 +35,7 @@ void main()
 	{
 		cout << "You lost! Better luck next time. ;)";
 	}
+	cout << endl << endl;
 }
 
 int get_number(string const& message)
@@ -58,15 +60,19 @@ int get_number(string const& message)
 		return num;
 	}
 }
-void initialize(size_t& amount_l, size_t& amount_r)
+void initialize(size_t& amount_l, size_t& amount_r, size_t const min, size_t const max)
 {
-	while (amount_l < 5 || amount_l > 25)
+	// Read in the number of stones.
+	amount_l = get_number("Please enter the number of stones on the left (" + std::to_string(min) + "-" + std::to_string(max) + ")");
+	while (amount_l < min || amount_l > max)
 	{
-		amount_l = get_number("Please enter the number of stones on the left (5-25)");
+		amount_l = get_number("Invalid number! Please re-enter:");
 	}
-	while (amount_r < 5 || amount_r > 25)
+
+	amount_r = get_number("Please enter the number of stones on the right (" + std::to_string(min) + "-" + std::to_string(max) + ")");
+	while (amount_r < min || amount_r > max)
 	{
-		amount_r = get_number("Please enter the number of stones on the right (5-25)");
+		amount_r = get_number("Invalid number! Please re-enter:");
 	}
 	system("cls");
 }
@@ -189,7 +195,7 @@ void print_gamestate(size_t const amount_l, size_t const amount_r, action_t acti
 		cout << "\tv";
 		cout << endl;
 	}
-	cout << amount_l << " | " << amount_r << endl;
+
 	for (size_t i(0); i < amount_l; i++)
 	{
 		cout << (char)220 << " ";
