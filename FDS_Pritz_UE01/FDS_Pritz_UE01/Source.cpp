@@ -1,5 +1,4 @@
 #include<iostream>
-#include<string>
 #include<stdlib.h>
 using std::cout;
 using std::cin;
@@ -19,7 +18,7 @@ action_t user_move(size_t& amount_l, size_t& amount_r);
 // Prints the current state of the game.
 void print_gamestate(size_t const amount_l, size_t const amount_r, action_t action);
 // Runs the game-loop and returns the winning user
-int play_game(size_t& amount_l, size_t& amount_r);
+size_t play_game(size_t& amount_l, size_t& amount_r);
 
 void main()
 {
@@ -202,7 +201,7 @@ void print_gamestate(size_t const amount_l, size_t const amount_r, action_t acti
 	}
 	cout << endl << endl << endl;
 }
-int play_game(size_t& amount_l, size_t& amount_r)
+size_t play_game(size_t& amount_l, size_t& amount_r)
 {
 	size_t current_user(0);
 	action_t last_action(start);
