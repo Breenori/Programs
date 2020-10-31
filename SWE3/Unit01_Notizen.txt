@@ -1,0 +1,29 @@
+Heap = Datenstruktur
+wird definiert als "ein durch array abgebildeter baum"
+
+Immer links zuerst auffüllen! (nicht binärer suchbaum!)
+Relation definieren:
+parent(vi) 	= (i - 1) / 2
+left(vi) 	= 2 * i + 1
+right(vi)	= (i + 1) * 2		// bzw. left(vi) + 1
+
+
+Zusätzlich:
+Heap-Eigenschaft: (heapify)
+parent(vi) >= vi
+
+--> Größtes Element ganz oben! (Max Heap!)
+
+Danach sortieren: 
+- Größtes Element (element 1) mit letztem Element swappen.
+- Danach wieder heapify, aber nur für n-1 (größtes element wird nicht mehr auf heap-eigenschaft überprüft)
+- ... repeat.
+
+
+
+Zur Übung:
+Funktionsweise vom Heapsort in Lösungsidee geben!
+
+Tests: Best, worst und average case. Spezialfälle.
+
+Auch quelltext als anhang vom dokument anfügen!
